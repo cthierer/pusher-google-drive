@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/cthierer/pusher-google-drive/issues"
   },
-  "homepage": "https://github.com/cthierer/pusher-google-drive#readme"
+  "homepage": "https://github.com/cthierer/pusher-google-drive#readme",
+  "dependencies": {
+    "bluebird": "^3.4.1",
+    "uuid": "^2.0.2"
+  }
 }
