@@ -1,0 +1,19 @@
+{
+  "name": "pusher-google-drive",
+  "version": "1.0.0",
+  "description": "Push files to Google Drive.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cthierer/pusher-google-drive.git"
+  },
+  "author": "Chris Thierer <cthierer1@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cthierer/pusher-google-drive/issues"
+  },
+  "homepage": "https://github.com/cthierer/pusher-google-drive#readme"
+}
