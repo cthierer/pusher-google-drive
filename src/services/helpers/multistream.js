@@ -70,11 +70,17 @@ var MultiStream = function (stream, boundary) {
         writeBoundary();
         writeHeader(mimeType);
         return new Promise(function (resolve) {
-            readStream.on('data', write);
-            readStream.on('end', function () {
+            if (readStream instanceof Buffer) {
+                stream.write(readStream);
                 writeln();
                 resolve();
-            });
+            } else {
+                readStream.on('data', write);
+                readStream.on('end', function () {
+                    writeln();
+                    resolve();
+                });
+            }
         });
     }
 
