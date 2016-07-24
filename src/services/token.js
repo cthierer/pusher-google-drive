@@ -126,7 +126,7 @@ function getToken (user, scopes, privateKey) {
             res.on('end', function () {
                 try {
                     var parsed = JSON.parse(data);
-                    resolve(parsed['access_token']);
+                    resolve(parsed);
                 } catch (e) {
                     reject(e);
                 }

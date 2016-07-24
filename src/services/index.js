@@ -12,6 +12,11 @@ module.exports = {
     /**
      * @see {module:src/services/token}
      */
-    Token: require('./token')
+    Token: require('./token'),
+
+    /**
+     * @see {module:src/services/token_factory}
+     */
+    TokenFactory: require('./token_factory')
 
 };
