@@ -33,6 +33,47 @@ function getRange (start, end, sheet) {
 
 /**
  * @param {string} spreadsheetID
+ * @param {string} sheet
+ * @param {array} values
+ * @param {string} token
+ * @returns {Promise}
+ */
+function appendValues (spreadsheetID, sheet, values, token) {
+  const range = sheet
+  const path = `${API_PATH_SHEETS}/${encodeURIComponent(spreadsheetID)}/values/${encodeURIComponent(range)}:append?insertDataOption=INSERT_ROWS&valueInputOption=USER_ENTERED`
+
+  return new Promise((resolve, reject) => {
+    const req = https.request({
+      hostname: API_HOSTNAME,
+      path: path,
+      method: "POST",
+      headers: {
+        "authorization": `Bearer ${token}`
+      }
+    }, (res) => {
+      var data = ""
+
+      res.on('data', (chunk) => {
+        data += chunk
+      })
+
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(data))
+        } catch (err) {
+          reject(err)
+        }
+      })
+    })
+
+    req.on('error', reject)
+    req.write(JSON.stringify({ values }))
+    req.end()
+  })
+}
+
+/**
+ * @param {string} spreadsheetID
  * @param {string} start
  * @param {string} end
  * @param {string} token
@@ -85,5 +126,6 @@ function getValues (spreadsheetID, start, end, token, options) {
 }
 
 module.exports = {
-  getValues: getValues
+  appendValues,
+  getValues
 }

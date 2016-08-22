@@ -57,7 +57,6 @@ function upload (fileStream, mime, properties, token) {
                     var parsed = JSON.parse(data);
                     resolve(parsed);
                 } catch (e) {
-                    console.log('data', data);
                     reject(e);
                 }
             });

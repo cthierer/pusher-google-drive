@@ -44,6 +44,12 @@ var GoogleDrivePusher = function (user, key) {
             return src.Services.Sheets.getValues(spreadsheet, start, end, token, options);
         });
     }
+
+    this.addValuesToSpreadsheet = function (spreadsheet, sheet, values) {
+        return spreadsheetTokenFactory.getToken().then(function (token) {
+            return src.Services.Sheets.appendValues(spreadsheet, sheet, values, token);
+        });
+    }
 };
 
 module.exports = GoogleDrivePusher;
