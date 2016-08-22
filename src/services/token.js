@@ -38,7 +38,9 @@ const GRANT_TYPE = "urn:ietf:params:oauth:grant-type:jwt-bearer";
  */
 const SCOPES = {
     FILE: "https://www.googleapis.com/auth/drive.file",
-    META: "https://www.googleapis.com/auth/drive.metadata"
+    META: "https://www.googleapis.com/auth/drive.metadata",
+    READ: "https://www.googleapis.com/auth/drive.readonly",
+    SPREADSHEETS: "https://www.googleapis.com/auth/spreadsheets"
 };
 
 /**

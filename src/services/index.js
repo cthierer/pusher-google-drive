@@ -10,6 +10,11 @@ module.exports = {
     File: require('./file'),
 
     /**
+     * @see {module:src/services/sheets}
+     */
+    Sheets: require('./sheets'),
+
+    /**
      * @see {module:src/services/token}
      */
     Token: require('./token'),

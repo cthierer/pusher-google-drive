@@ -14,13 +14,18 @@ const UPLOAD_SCOPES = [
     src.Services.Token.SCOPES.META
 ];
 
+const SPREADSHEET_SCOPES = [
+    src.Services.Token.SCOPES.SPREADSHEETS
+];
+
 /**
  * @class
  * @param {string} user
  * @param {string} key
  */
 var GoogleDrivePusher = function (user, key) {
-    var tokenFactory = new TokenFactory(user, UPLOAD_SCOPES, key);
+    var fileTokenFactory = new TokenFactory(user, UPLOAD_SCOPES, key);
+    var spreadsheetTokenFactory = new TokenFactory(user, SPREADSHEET_SCOPES, key);
 
     /**
      * @param {Stream|Buffer} file
@@ -29,8 +34,14 @@ var GoogleDrivePusher = function (user, key) {
      * @returns {bluebird/Promise}
      */
     this.uploadFile = function (file, mime, properties) {
-        return tokenFactory.getToken().then(function (token) {
+        return fileTokenFactory.getToken().then(function (token) {
             return src.Services.File.upload(file, mime, properties, token);
+        });
+    }
+
+    this.getValuesFromSpreadsheet = function (spreadsheet, start, end, options) {
+        return spreadsheetTokenFactory.getToken().then(function (token) {
+            return src.Services.Sheets.getValues(spreadsheet, start, end, token, options);
         });
     }
 };
