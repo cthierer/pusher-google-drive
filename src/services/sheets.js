@@ -2,8 +2,9 @@
  * @module src/services/sheets
  */
 
-const https = require('https'),
-  Promise = require('bluebird');
+const https = require('https')
+const http = require('http')
+const Promise = require('bluebird')
 
 /**
  * @constant
@@ -32,6 +33,40 @@ function getRange (start, end, sheet) {
 }
 
 /**
+ * @param {ServerResponse} res
+ * @returns {Promise}
+ */
+function processResponse (res) {
+  return new Promise((resolve, reject) => {
+    var data = ''
+
+    res.on('data', (chunk) => {
+      data += chunk
+    })
+
+    res.on('end', () => {
+      try {
+        const parsed = JSON.parse(data)
+        if (res.statusCode < 300) {
+          // successful
+          resolve(parsed)
+        } else {
+          // failed
+          const error = parsed.error
+          reject(new Error(`${error.status} [${error.code}]: ${error.message}`))
+        }
+      } catch (e) {
+        if (res.statusCode < 300) {
+          reject(e)
+        } else {
+          reject(new Error(`${http.STATUS_CODES[res.statusCode]} [${res.statusCode}]`))
+        }
+      }
+    })
+  })
+}
+
+/**
  * @param {string} spreadsheetID
  * @param {string} sheet
  * @param {array} values
@@ -50,21 +85,7 @@ function appendValues (spreadsheetID, sheet, values, token) {
       headers: {
         "authorization": `Bearer ${token}`
       }
-    }, (res) => {
-      var data = ""
-
-      res.on('data', (chunk) => {
-        data += chunk
-      })
-
-      res.on('end', () => {
-        try {
-          resolve(JSON.parse(data))
-        } catch (err) {
-          reject(err)
-        }
-      })
-    })
+    }, (res) => { resolve(processResponse(res)) })
 
     req.on('error', reject)
     req.write(JSON.stringify({ values }))
@@ -97,28 +118,20 @@ function getValues (spreadsheetID, start, end, token, options) {
         "authorization": `Bearer ${token}`
       }
     }, (res) => {
-      var data = ""
-
-      res.on('data', (chunk) => {
-        data += chunk
-      })
-
-      res.on('end', () => {
-        try {
-          var parsed = JSON.parse(data)
-          var result = Object.assign({ data: [] }, parsed)
-          if (parsed.values) {
-            parsed.values.forEach((value, idx, arr) => {
-              if (options.filter(value, idx, arr)) {
-                result.data.push(options.format(value, idx, arr))
-              }
-            })
-          }
-          resolve(result)
-        } catch (e) {
-          reject(e)
+      const result = processResponse(res).then((data) => {
+        if (data.values) {
+          data.data = data.values.reduce((prev, val, idx, arr) => {
+            if (options.filter(val, idx, arr)) {
+              return prev.concat(options.format(val, idx, arr))
+            }
+            return prev
+          }, [])
+        } else {
+          data.data = []
         }
+        return data
       })
+      resolve(result)
     }).on('error', (err) => {
       reject(err)
     }).end()
